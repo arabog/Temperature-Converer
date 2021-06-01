@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <meta charset="UTF-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+          <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+          <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+
+          <title>Calculator</title>
+</head>
+<body>
+          <div id="root"></div>
+
+          <script type= "text/babel">
+
+                    function WillWaterBoil(props) {
+                              if(props.celsius >= 100) {
+                                        return <p>The Water Will Boil</p>
+                              }
+
+                              return <p>The Water Would Not Boil</p>
+                    }
+
+                    const scaleUnit ={
+                              'c': 'Celsius',
+                              'f': 'Fahrenheint'
+                    }
+
+                    function toCal(fah) {
+                              return (fah -32) * 5 / 9
+                    }
+
+                    function toFah(cel) {
+                              return (cel * 9 / 5) + 32
+                    }
+
+                    function toConvert(temp, func) {
+                              const input = parseFloat(temp)
+
+                              if(Number.isNaN(input)) {
+                                        return ''
+                              }
+
+                              const output = func(input)
+
+                              const rounded = Math.round(output * 1000) / 1000
+
+                              return rounded.toString()
+                    }
+
+
+                    class TempInputs extends React.Component {
+                              constructor(props) {
+                                        super(props);
+                              }
+
+                              handleChange=(e)=> {
+                                        this.props.onChange(e.target.value)
+                              }
+
+
+                              render() { 
+                                        const value = this.props.value
+                                        const scale = this.props.scale
+
+                                        return ( 
+                                                  <fieldset>
+                                                            <legend>Enter Temperature in {scaleUnit[scale]}</legend>
+                                                            
+                                                            <input 
+                                                                      type="text"
+                                                                      value = {value}
+                                                                      onChange = {this.handleChange}
+                                                            />
+                                                  </fieldset>
+                                        );
+                              }
+                    }
+                    
+
+                    class Calculator extends React.Component {
+                              constructor(props) {
+                                        super(props);
+                                        this.state = { 
+                                                  temp: '',
+                                                  unit: 'c'
+                                        }
+                              }
+
+                              handleCelChange=(event) => {
+                                        this.setState({
+                                                  temp: event,
+                                                  unit: 'c'
+                                        })
+                              }
+
+                              handleFahChange = (event) => {
+                                        this.setState({
+                                                  temp: event,
+                                                  unit: 'f'
+                                        })
+                              }
+
+                              render() { 
+                                        const stateTemp = this.state.temp
+                                        const scaleTemp = this.state.unit
+
+                                        const celsius = scaleTemp === 'f'
+                                                  ? (toConvert(stateTemp, toCal))
+                                                  : stateTemp
+
+                                        const fah = scaleTemp === 'c'
+                                                  ? (toConvert(stateTemp, toFah))
+                                                  : stateTemp
+
+                              
+                                        return (
+                                                  <div>
+                                                            <TempInputs 
+                                                                      scale = 'c'
+                                                                      value = {celsius}
+                                                                      onChange = {this.handleCelChange}
+                                                            />   
+                                                            
+                                                            <TempInputs 
+                                                                      scale = 'f'
+                                                                      value = {fah}
+                                                                      onChange = {this.handleFahChange}
+                                                            />          
+
+                                                            <WillWaterBoil celsius = {parseFloat(celsius)} />
+                                                  </div>
+                                        );
+                              }
+                    }
+                    
+
+                    ReactDOM.render(
+                              <Calculator />,
+                              document.getElementById('root')
+                    )
+          
+          </script>
+</body>
+
+</html>
